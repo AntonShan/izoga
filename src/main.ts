@@ -1,10 +1,7 @@
-import yargs from 'yargs'
-import {hideBin} from 'yargs/helpers'
+import "reflect-metadata";
+import "@total-typescript/ts-reset";
+import { ListUnused } from "./commands/list-unused";
+import { Add } from "./commands/add";
+import { bootstrap } from "./bootstrap";
 
-yargs(hideBin(process.argv))
-    .command('curl <url>', 'fetch the contents of the URL', () => {
-    }, (argv) => {
-        console.info(argv)
-    })
-    .demandCommand(1)
-    .parse()
+bootstrap([Add, ListUnused]);

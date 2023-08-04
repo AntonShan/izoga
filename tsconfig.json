@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "lib": ["ESNext", "DOM"],
-    "types": ["reflect-metadata", "node"],
+    "lib": ["ES2021"],
+    "types": ["reflect-metadata", "node", "jest"],
     "module": "commonjs",
     "moduleResolution": "node",
     "removeComments": true,
@@ -11,7 +11,7 @@
     "noUncheckedIndexedAccess": true,
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": false,
     "strict": true,
     "strictBindCallApply": false,
