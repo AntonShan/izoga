@@ -182,6 +182,7 @@ describe("MetadataParserService", () => {
     it("Should parse addon metadata", () => {
         /* eslint-disable */
         const expectation: AddonMetadata = {
+            name: "AutoCategory",
             title: "AutoCategory",
             apiVersion: ["101033", "101032"],
             version: "2.37",
@@ -242,11 +243,12 @@ describe("MetadataParserService", () => {
             ],
         };
         /* eslint-enable */
-        expect(service.parse(addonManifest)).toStrictEqual(expectation);
+        expect(service.parse("AutoCategory", addonManifest)).toStrictEqual(expectation);
     });
 
     it("Should parse WritWorthy manifest", () => {
         const expectation: AddonMetadata = {
+            name: "WritWorthy",
             title: "WritWorthy 7.3.7",
             version: "7.3.7",
             apiVersion: ["101037", "101038"],
@@ -324,11 +326,12 @@ describe("MetadataParserService", () => {
             ],
         };
 
-        expect(service.parse(writWorthyManifest)).toStrictEqual(expectation);
+        expect(service.parse("WritWorthy", writWorthyManifest)).toStrictEqual(expectation);
     });
 
     it("Should parse LibMediaProvider manifest", () => {
         const expectation: AddonMetadata = {
+            name: "LibMediaProvider",
             title: "LibMediaProvider-1.0",
             author: ["Seerah", "psypanda", "ArtOfShred", "Calamath"],
             version: "1.0 r26",
@@ -349,6 +352,8 @@ describe("MetadataParserService", () => {
             dependsOn: [],
         };
 
-        expect(service.parse(libMediaProviderManifest)).toStrictEqual(expectation);
+        expect(service.parse("LibMediaProvider", libMediaProviderManifest)).toStrictEqual(
+            expectation,
+        );
     });
 });

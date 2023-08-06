@@ -1,12 +1,12 @@
 import yargs, { ArgumentsCamelCase } from "yargs";
 import { hideBin } from "yargs/helpers";
+import { Constructable } from "./types/constructible.type";
 import {
     COMMAND_DESCRIPTION_METADATA_KEY,
     COMMAND_NAME_METADATA_KEY,
     COMMAND_PARAMETERS_METADATA_KEY,
-    CommandParameter,
-} from "./decorators/command.decorator";
-import { Constructable } from "./types/constructible.type";
+} from "./types/metadata";
+import { ParameterOptions } from "./decorators";
 
 export function bootstrap(commands: Constructable[]) {
     return commands
@@ -19,7 +19,7 @@ export function bootstrap(commands: Constructable[]) {
                 const commandName = Reflect.getOwnMetadata(COMMAND_NAME_METADATA_KEY, Command);
                 const commandDescription =
                     Reflect.getOwnMetadata(COMMAND_DESCRIPTION_METADATA_KEY, Command) ?? "";
-                const commandParameters: CommandParameter[] =
+                const commandParameters: ParameterOptions[] =
                     Reflect.getOwnMetadata(
                         COMMAND_PARAMETERS_METADATA_KEY,
                         Command.prototype,
@@ -33,16 +33,16 @@ export function bootstrap(commands: Constructable[]) {
                         (parameter, index): null | string | number | boolean => {
                             const rawParameterValue = argv[parameter.name];
 
-                            if (typeof rawParameterValue !== "string") {
-                                if (parameter.optional === true) {
+                            if (rawParameterValue === null || rawParameterValue === undefined) {
+                                if (parameter.optional !== true) {
                                     throw new Error(
                                         `Command ${commandName} is missing required parameter ${parameter.name} at position ${index}`,
                                     );
                                 }
-                                return null;
                             }
 
                             if (parameter.type === "number") {
+                                // @ts-ignore
                                 return parseFloat(rawParameterValue);
                             }
 
@@ -50,7 +50,11 @@ export function bootstrap(commands: Constructable[]) {
                                 return Boolean(rawParameterValue);
                             }
 
-                            return rawParameterValue;
+                            if (parameter.type === "string") {
+                                return String(rawParameterValue);
+                            }
+
+                            return null;
                         },
                     );
 
@@ -62,10 +66,14 @@ export function bootstrap(commands: Constructable[]) {
                     commandDescription,
                     (yargs) => {
                         commandParameters.reduce((yargs, parameter) => {
-                            return yargs.positional(parameter.name, {
+                            const options = {
                                 type: parameter.type,
                                 describe: parameter.describe,
-                            });
+                            };
+                            if (parameter.optional) {
+                                return yargs.option(parameter.name, options);
+                            }
+                            return yargs.positional(parameter.name, options);
                         }, yargs);
                     },
                     handler,
@@ -73,11 +81,13 @@ export function bootstrap(commands: Constructable[]) {
             },
             yargs(hideBin(process.argv)),
         )
+        .help()
         .parse();
 }
 
-function buildCommandString(name: string, parameters: CommandParameter[]): string {
+function buildCommandString(name: string, parameters: ParameterOptions[]): string {
     const parametersString = parameters
+        .filter((parameter) => !parameter.optional)
         .map((parameter) => (parameter.optional ? `[${parameter.name}]` : `<${parameter.name}>`))
         .join(" ");
 

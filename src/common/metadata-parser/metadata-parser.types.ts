@@ -1,6 +1,7 @@
 export type PrimitiveValue = string | number | boolean;
 
 export type AddonMetadata = {
+    name: string;
     title: string;
     apiVersion: string[];
     version: string;

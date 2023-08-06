@@ -1,5 +1,5 @@
 // import datastore from "../../common/datastore/datastore";
-import { Command, Parameter } from "../../decorators/command.decorator";
+import { Command, Parameter } from "../../decorators";
 import { CommandInterface } from "../../types/command.interface";
 
 @Command("add")

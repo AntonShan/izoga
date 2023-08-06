@@ -36,8 +36,9 @@ export class MetadataParserService {
         IsLibrary: bool("isLibrary"),
     };
 
-    parse(input: string): AddonMetadata {
+    parse(name: string, input: string): AddonMetadata {
         const result = new EsoAddonMetadata();
+        result.metadata.name = name;
 
         for (const rawLine of input.split(/\n/)) {
             const line = rawLine.trim();

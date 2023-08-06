@@ -3,6 +3,7 @@ import { ADDON_WITH_VERSION, versionSelectorMap } from "./metadata-parser.consta
 
 export class EsoAddonMetadata {
     readonly metadata: AddonMetadata = {
+        name: "",
         additionalMeta: {},
         apiVersion: [],
         author: [],
