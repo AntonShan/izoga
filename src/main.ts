@@ -1,8 +1,6 @@
 import "reflect-metadata";
 import "@total-typescript/ts-reset";
 import { bootstrap } from "./bootstrap";
-import { ListUnused } from "./commands/list-unused";
-import { Add } from "./commands/add";
-import { ListMissing } from "./commands/list-missing";
+import { commands } from "./commands";
 
-bootstrap([Add, ListUnused, ListMissing]);
+bootstrap(commands);

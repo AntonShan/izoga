@@ -10,7 +10,7 @@ export type ParameterOptions = {
 export function Parameter(name: string, data: Omit<ParameterOptions, "name">): ParameterDecorator {
     return function (target, propertyKey, parameterIndex) {
         if (!propertyKey) {
-            throw new Error("gay");
+            throw new Error("No propertyKey");
         }
 
         const existingParameters: ParameterOptions[] =
@@ -25,5 +25,6 @@ export function Parameter(name: string, data: Omit<ParameterOptions, "name">): P
             target,
             propertyKey,
         );
+        return target;
     };
 }

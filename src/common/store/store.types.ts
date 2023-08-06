@@ -16,3 +16,4 @@ export const datastoreSchema = z.object({
 });
 
 export type Datastore = z.infer<typeof datastoreSchema>;
+export type Profile = Datastore["profiles"][number];
