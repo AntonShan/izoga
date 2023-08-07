@@ -6,16 +6,20 @@
         "test": "jest",
         "format": "prettier --write \"src/**/*.ts\"",
         "lint": "eslint \"src/**/*.ts\" --fix",
-        "build": "ncc build src/main.ts -o dist && pkg dist/index.js --compress Brotli"
+        "build": "ncc build src/main.ts -o dist && pkg dist/index.js --compress Brotli -t node16-win-x64 -o ./dist/izoga.exe ",
+        "download-test": "ts-node src/download-test.ts"
     },
     "dependencies": {
+        "bent": "^7.3.12",
         "inversify": "^6.0.1",
         "reflect-metadata": "^0.1.13",
+        "unzipper": "^0.10.14",
         "yargs": "^17.7.2",
         "zod": "^3.21.4"
     },
     "devDependencies": {
         "@total-typescript/ts-reset": "^0.4.2",
+        "@types/bent": "^7.3.3",
         "@types/jest": "^29.5.3",
         "@types/node": "^20.4.6",
         "@types/yargs": "^17.0.24",

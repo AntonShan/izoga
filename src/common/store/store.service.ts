@@ -40,33 +40,77 @@ export class StoreService {
                 this.dataStore = {
                     profiles: [],
                 };
+                resolve(this);
             }
         });
     }
 
-    async addProfile(name: string, path: string): Promise<Profile> {
+    private async awaitDatastore<Return>(cb: () => Promise<Return> | Return, persist = false) {
         await this.loadingPromise;
-        const existingProfile = this.dataStore.profiles.find((profile) => profile.name === name);
-        if (existingProfile) {
-            throw new Error(`Profile with name "${name}" already exists`);
+
+        const result = await cb();
+
+        if (persist) {
+            await this.persist();
         }
-        const newProfile = { name, path, addons: [] };
-        this.dataStore.profiles.push(newProfile);
-        await this.persist();
-        return newProfile;
+
+        return result;
+    }
+
+    async setDefault(name: string) {
+        await this.awaitDatastore(() => {
+            if (!this.dataStore.profiles.find((profile) => profile.name === name)) {
+                throw new Error(`No profile with name "${name}" exist`);
+            }
+            this.dataStore.default = name;
+        }, true);
+    }
+
+    async getDefault() {
+        return this.awaitDatastore(() => {
+            return this.dataStore.default;
+        });
+    }
+
+    async addProfile(name: string, path: string): Promise<Profile> {
+        return await this.awaitDatastore(() => {
+            const existingProfile = this.dataStore.profiles.find(
+                (profile) => profile.name === name,
+            );
+            if (existingProfile) {
+                throw new Error(`Profile with name "${name}" already exists`);
+            }
+            const newProfile = { name, path, addons: [] };
+            this.dataStore.profiles.push(newProfile);
+
+            return newProfile;
+        }, true);
     }
 
     async deleteProfile(name: string): Promise<void> {
-        await this.loadingPromise;
-        this.dataStore.profiles = this.dataStore.profiles.filter((profile) => {
-            return profile.name === name;
+        return this.awaitDatastore(() => {
+            this.dataStore.profiles = this.dataStore.profiles.filter((profile) => {
+                return profile.name !== name;
+            });
+        }, true);
+    }
+
+    async getProfile(name: string): Promise<Profile> {
+        return this.awaitDatastore(() => {
+            const profile = this.dataStore.profiles.find((profile) => profile.name === name);
+
+            if (!profile) {
+                throw new Error(`Profile "${name}" doesn't exist`);
+            }
+
+            return profile;
         });
-        await this.persist();
     }
 
     async listProfiles(): Promise<Profile[]> {
-        await this.loadingPromise;
-        return this.dataStore.profiles;
+        return this.awaitDatastore(() => {
+            return this.dataStore.profiles;
+        });
     }
 
     private async persist(): Promise<void> {

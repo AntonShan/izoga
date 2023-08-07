@@ -1,4 +1,4 @@
-import yargs, { ArgumentsCamelCase } from "yargs";
+import yargs, { ArgumentsCamelCase, Options, PositionalOptions } from "yargs";
 import { hideBin } from "yargs/helpers";
 import { Constructable } from "./types/constructible.type";
 import {
@@ -21,15 +21,9 @@ export function bootstrap(commands: Constructable[]) {
                     throw new Error(`${Command.name} is not annotated with Command decorator`);
                 }
 
-                const commandName = Reflect.getOwnMetadata(COMMAND_NAME_METADATA_KEY, Command);
-                const commandDescription =
-                    Reflect.getOwnMetadata(COMMAND_DESCRIPTION_METADATA_KEY, Command) ?? "";
-                const commandParameters: ParameterOptions[] =
-                    Reflect.getOwnMetadata(
-                        COMMAND_PARAMETERS_METADATA_KEY,
-                        Command.prototype,
-                        "execute",
-                    ) ?? [];
+                const { commandName, commandDescription, commandParameters } =
+                    getCommandMetadata(Command);
+
                 container.bind(Command).toSelf();
                 const commandString = buildCommandString(commandName, commandParameters);
                 const commandInstance = resolveCommandDependencies(Command, container);
@@ -37,18 +31,21 @@ export function bootstrap(commands: Constructable[]) {
                 const handler = buildHandler(commandInstance, commandName, commandParameters);
 
                 return yargs.command(
+                    // commandName,
                     commandString,
                     commandDescription,
                     (yargs) => {
                         commandParameters.reduce((yargs, parameter) => {
-                            const options = {
+                            const options: Options = {
                                 type: parameter.type,
-                                describe: parameter.describe,
+                                description: parameter.description,
+                                default: parameter.defaultValue,
+                                demandOption: !parameter.optional,
                             };
                             if (parameter.optional) {
                                 return yargs.option(parameter.name, options);
                             }
-                            return yargs.positional(parameter.name, options);
+                            return yargs.positional(parameter.name, options as PositionalOptions);
                         }, yargs);
                     },
                     handler,
@@ -56,8 +53,23 @@ export function bootstrap(commands: Constructable[]) {
             },
             yargs(hideBin(process.argv)),
         )
+        .version("0.0.1")
         .help()
         .parse();
+}
+
+function getCommandMetadata(Command: Constructable) {
+    const commandName = Reflect.getOwnMetadata(COMMAND_NAME_METADATA_KEY, Command);
+    const commandDescription =
+        Reflect.getOwnMetadata(COMMAND_DESCRIPTION_METADATA_KEY, Command) ?? "";
+    const commandParameters: ParameterOptions[] =
+        Reflect.getOwnMetadata(COMMAND_PARAMETERS_METADATA_KEY, Command.prototype, "execute") ?? [];
+
+    return {
+        commandName,
+        commandDescription,
+        commandParameters,
+    };
 }
 
 function resolveCommandDependencies(Command: Constructable, container: Container) {
@@ -77,8 +89,16 @@ function buildCommandString(name: string, parameters: ParameterOptions[]): strin
     if (parameters.length === 0) return name;
 
     const parametersString = parameters
-        .filter((parameter) => !parameter.optional)
-        .map((parameter) => (parameter.optional ? `[${parameter.name}]` : `<${parameter.name}>`))
+        .map((parameter) => {
+            if (parameter.optional) {
+                if (parameter.type === "boolean") {
+                    return `[--${parameter.name}]`;
+                }
+                return `[${parameter.name}]`;
+            } else {
+                return `<${parameter.name}>`;
+            }
+        })
         .join(" ");
 
     return `${name} ${parametersString}`;

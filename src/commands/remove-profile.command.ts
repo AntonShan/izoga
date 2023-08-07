@@ -3,19 +3,16 @@ import { CommandInterface } from "../types/command.interface";
 import { injectable } from "inversify";
 import { StoreService } from "../common/store";
 
-@Command("add")
+@Command("profile-remove")
 @injectable()
-export class AddCommand implements CommandInterface {
+export class RemoveProfileCommand implements CommandInterface {
     constructor(private readonly storeService: StoreService) {}
 
-    async execute(
-        @Parameter("path", { type: "string" }) path: string,
-        @Parameter("name", { type: "string" }) name: string,
-    ): Promise<void> {
+    async execute(@Parameter("name", { type: "string" }) name: string): Promise<void> {
         try {
-            const newEntry = await this.storeService.addProfile(name, path);
+            await this.storeService.deleteProfile(name);
 
-            console.table(newEntry);
+            console.log(`Successfully removed profile "${name}". Addons folder remains intact`);
         } catch (e: any) {
             console.log(e.message);
         }

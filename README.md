@@ -4,8 +4,14 @@ A console application to do some stuff with ESO addons that's not provided by Mi
 
 ## Currently available commands
 
-- missing - display list of missing dependencies
-- unused - display list of unused libraries
+  - `profile-add` <path> <name>          Register profile
+  - `profile-remove` <name>              Remove profile. Removes just profile, leaving files as is
+  - `profiles`                           List exising profiles
+  - `set-default` <name>                 Remembers selected profile as default. Doesn't affect anything at the moment
+  - `missing` <name> [--optional]        List missing addon dependencies
+  - `unused` <name>                      list unused addons in path
+  - `remove-unused` <name>               list unused addons in path
+  - `install-missing` <name>             Installs missing addon dependencies
 
 At the moment both commands accept only path to the folder containing UserSettings.txt file. Usually it's one of two:
 - %Documents%\Elder Scrolls Online\live
@@ -35,3 +41,7 @@ In the end, command must be registered. To do that, add your class to an array o
         ListMissing
     ]);
 ```
+
+## File system imprint
+
+Izoga saves its db file to `%APPDATA%/Local/izoga/store.db`. It contains only list of registered profiles and profile selected as default

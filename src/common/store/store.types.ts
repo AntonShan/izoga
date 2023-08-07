@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const datastoreSchema = z.object({
+    default: z.string().optional(),
     profiles: z.array(
         z.object({
             name: z.string().min(1).max(255),
