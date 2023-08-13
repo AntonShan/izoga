@@ -17,6 +17,17 @@ At the moment both commands accept only path to the folder containing UserSettin
 - %Documents%\Elder Scrolls Online\live
 - %Documents%\Elder Scrolls Online\pts
 
+## How to use
+
+  1. Register addons path using `profile add`. For example `izoga profile add "C:\Users\Username\Documents\Elder Scrolls Online\live" live`. If path has spaces it must be put inside double quotes
+  1. `izoga install-missing live` to install addons that are required but not installed currently
+
+Also:
+
+  - You may want to add Izoga to PATH to call it from whatever directory you want
+  - You may also want to see what Izoga can do. Do `izoga --help` to see full list of available commands
+
+
 ## How to define command
 
 Create a class extending `CommandInterface` and decorate it `Command` decorator. You can optionally decorate it with `Description` decorator to explain what this command does
