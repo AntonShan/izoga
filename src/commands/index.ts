@@ -6,8 +6,10 @@ import { RemoveProfileCommand } from "./remove-profile.command";
 import { SetDefaultCommand } from "./set-default.command";
 import { RemoveUnusedCommand } from "./remove-unused.command";
 import { InstallMissingCommand } from "./install-missing.command";
+import { InstalledCommand } from "./installed.command";
 
 export const commands = [
+    InstalledCommand,
     AddProfileCommand,
     RemoveProfileCommand,
     ProfilesCommand,

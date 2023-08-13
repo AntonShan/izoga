@@ -1,29 +1,38 @@
 import { injectable } from "inversify";
 import { AddonMetadata, MetadataParserService } from "../metadata-parser";
-import { resolve } from "node:path";
-import { access, constants, readdir, readFile, rm } from "node:fs/promises";
+import { resolve, basename, extname } from "node:path";
+import { constants } from "node:fs";
+import { access, readFile, rm } from "node:fs/promises";
+import { glob } from "glob";
 
 @injectable()
 export class AddonsService {
     async getInstalledAddons(path: string): Promise<AddonMetadata[]> {
         const resolvedPath = resolve(path);
         const addonsFolderPath = resolve(resolvedPath, "AddOns");
-        const addons = await readdir(addonsFolderPath);
+        const metadataFilePaths = await glob(`${addonsFolderPath}/**/*.txt`, {
+            absolute: true,
+            windowsPathsNoEscape: true,
+        });
         const metadataParserService = new MetadataParserService();
         const addonManifests: AddonMetadata[] = [];
 
-        for await (const addon of addons) {
-            const manifestFilePath = resolve(addonsFolderPath, addon, `${addon}.txt`);
+        for await (const metadataFilePath of metadataFilePaths) {
+            const manifestFilePath = resolve(metadataFilePath);
 
             try {
                 await access(manifestFilePath, constants.R_OK);
                 const file = await readFile(manifestFilePath);
+                const addonName = basename(metadataFilePath, extname(metadataFilePath));
 
-                const parsedManifest = metadataParserService.parse(addon, file.toString("utf-8"));
+                const parsedManifest = metadataParserService.parse(
+                    addonName,
+                    file.toString("utf-8"),
+                );
                 addonManifests.push(parsedManifest);
             } catch (e) {
                 console.log(
-                    `Manifest for addon ${addon} doesn't exist or cannot be read. Skipping`,
+                    `Manifest for addon ${metadataFilePath} doesn't exist or cannot be read. Skipping`,
                 );
             }
         }
@@ -53,7 +62,6 @@ export class AddonsService {
         });
 
         return Array.from(missingAddons);
-        // return addons.filter((addon) => missingAddons.has(addon.name));
     }
 
     async getUnusedAddons(path: string): Promise<AddonMetadata[]> {

@@ -1,4 +1,8 @@
-import { type AddonMetadata, type MetaProperty } from "./metadata-parser.types";
+import {
+    type AddonMetadata,
+    DetailedAddonDependency,
+    type MetaProperty,
+} from "./metadata-parser.types";
 import {
     COMMENT_LINE,
     EMPTY_LINE_CHECK,
@@ -58,7 +62,15 @@ export class MetadataParserService {
             if (property in this.propertyMap && typeof this.propertyMap[property] === "function") {
                 const [targetProperty, transformedValue] = this.propertyMap[property]!(value);
 
-                Reflect.set(result.metadata, targetProperty, transformedValue);
+                if (Reflect.has(result.metadata, targetProperty)) {
+                    if (Array.isArray(result.metadata[targetProperty])) {
+                        (result.metadata[targetProperty] as DetailedAddonDependency[]).push(
+                            ...(transformedValue as DetailedAddonDependency[]),
+                        );
+                    }
+                } else {
+                    Reflect.set(result.metadata, targetProperty, transformedValue);
+                }
             } else {
                 Reflect.set(result.metadata.additionalMeta, property, value);
             }

@@ -68,8 +68,12 @@ export class InstallMissingCommand implements CommandInterface {
 
         let installed = 0;
         for await (const addonToInstall of addonsToInstall) {
-            await this.minionService.download(addonToInstall, profile.path);
-            ++installed;
+            try {
+                await this.minionService.download(addonToInstall, profile.path);
+                ++installed;
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         return installed;

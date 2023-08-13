@@ -1,4 +1,5 @@
 {
+    "version": "1.0.0",
     "name": "izoga",
     "packageManager": "yarn@3.6.1",
     "scripts": {
@@ -6,11 +7,11 @@
         "test": "jest",
         "format": "prettier --write \"src/**/*.ts\"",
         "lint": "eslint \"src/**/*.ts\" --fix",
-        "build": "ncc build src/main.ts -o dist && pkg dist/index.js --compress Brotli -t node16-win-x64 -o ./dist/izoga.exe ",
-        "download-test": "ts-node src/download-test.ts"
+        "build": "ncc build src/main.ts -o dist && pkg dist/index.js --compress Brotli -t node16-win-x64 -o ./dist/izoga.exe"
     },
     "dependencies": {
         "bent": "^7.3.12",
+        "glob": "^10.3.3",
         "inversify": "^6.0.1",
         "reflect-metadata": "^0.1.13",
         "unzipper": "^0.10.14",
