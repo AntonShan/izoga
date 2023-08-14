@@ -13,6 +13,12 @@ export class AddonsService {
         const metadataFilePaths = await glob(`${addonsFolderPath}/**/*.txt`, {
             absolute: true,
             windowsPathsNoEscape: true,
+            ignore: {
+                ignored: (p) => {
+                    const fileName = basename(p.name, ".txt");
+                    return fileName !== p.parent?.name;
+                },
+            },
         });
         const metadataParserService = new MetadataParserService();
         const addonManifests: AddonMetadata[] = [];

@@ -7,7 +7,6 @@ import {
     COMMAND_PARAMETERS_METADATA_KEY,
 } from "./types/metadata";
 import { ParameterOptions } from "./decorators";
-import { CommandInterface } from "./types/command.interface";
 import { createContainer } from "./internals/container";
 import { Container } from "inversify";
 
@@ -26,12 +25,10 @@ export function bootstrap(commands: Constructable[]) {
 
                 container.bind(Command).toSelf();
                 const commandString = buildCommandString(commandName, commandParameters);
-                const commandInstance = resolveCommandDependencies(Command, container);
 
-                const handler = buildHandler(commandInstance, commandName, commandParameters);
+                const handler = buildHandler(Command, container, commandName, commandParameters);
 
                 return yargs.command(
-                    // commandName,
                     commandString,
                     commandDescription,
                     (yargs) => {
@@ -105,11 +102,14 @@ function buildCommandString(name: string, parameters: ParameterOptions[]): strin
 }
 
 function buildHandler(
-    commandInstance: CommandInterface,
+    Command: Constructable,
+    container: Container,
     commandName: string,
     commandParameters: ParameterOptions[],
 ) {
     return function (argv: ArgumentsCamelCase) {
+        const commandInstance = resolveCommandDependencies(Command, container);
+
         const commandArguments = commandParameters.map(
             (parameter, index): null | string | number | boolean => {
                 const rawParameterValue = argv[parameter.name];
