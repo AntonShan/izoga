@@ -1,7 +1,8 @@
+import { injectable } from "inversify";
+
+import { StoreService } from "../common/store";
 import { Command, Description, Parameter } from "../decorators";
 import { CommandInterface } from "../types/command.interface";
-import { injectable } from "inversify";
-import { StoreService } from "../common/store";
 
 @Command("set-default")
 @Description("Remembers selected profile as default")

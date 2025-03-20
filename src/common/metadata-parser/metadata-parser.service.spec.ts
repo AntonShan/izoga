@@ -180,7 +180,6 @@ describe("MetadataParserService", () => {
     });
 
     it("Should parse addon metadata", () => {
-        /* eslint-disable */
         const expectation: AddonMetadata = {
             name: "AutoCategory",
             title: "AutoCategory",
@@ -242,7 +241,7 @@ describe("MetadataParserService", () => {
                 "Bindings.xml",
             ],
         };
-        /* eslint-enable */
+
         expect(service.parse("AutoCategory", addonManifest)).toStrictEqual(expectation);
     });
 

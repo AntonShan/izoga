@@ -1,8 +1,9 @@
-import { Command, Description, Parameter } from "../decorators";
-import { CommandInterface } from "../types/command.interface";
 import { injectable } from "inversify";
+
 import { AddonsService } from "../common/addons";
 import { StoreService } from "../common/store";
+import { Command, Description, Parameter } from "../decorators";
+import type { CommandInterface } from "../types/command.interface";
 
 @Command("missing")
 @injectable()
@@ -31,7 +32,7 @@ export class ListMissing implements CommandInterface {
                 console.log("Following dependencies are missing:");
                 console.log(missingAddons.join("\n"));
             }
-        } catch (error) {
+        } catch (_error) {
             debugger;
         }
     }

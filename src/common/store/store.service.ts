@@ -1,7 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+
 import { injectable } from "inversify";
-import { Datastore, datastoreSchema, Profile } from "./store.types";
+
+import type { Datastore, Profile } from "./store.types";
+import { datastoreSchema } from "./store.types";
 
 @injectable()
 export class StoreService {

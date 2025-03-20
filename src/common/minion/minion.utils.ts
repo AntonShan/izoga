@@ -1,4 +1,10 @@
-import { AddonDetails, AddonSummary, MinionFileDetails, MinionFileShort } from "./minion.types";
+import type {
+    AddonDetails,
+    AddonSummary,
+    AddonSummary2,
+    MinionFileDetails,
+    MinionFileShort,
+} from "./minion.types";
 
 export function toAddonSummary(data: MinionFileShort): AddonSummary {
     return {
@@ -6,6 +12,16 @@ export function toAddonSummary(data: MinionFileShort): AddonSummary {
         fileInfoUrl: data.UIFileInfoURL,
         name: data.UIName,
         ids: data.UIDir,
+        version: data.UIVersion,
+    };
+}
+
+export function toAddonSummary2(data: MinionFileShort): AddonSummary2 {
+    return {
+        id: data.UID,
+        fileInfoUrl: data.UIFileInfoURL,
+        name: data.UIName,
+        version: data.UIVersion,
     };
 }
 

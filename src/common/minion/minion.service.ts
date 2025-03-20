@@ -1,20 +1,49 @@
+import { createWriteStream, mkdirSync } from "node:fs";
 import https from "node:https";
 import path from "node:path";
-import { createWriteStream, mkdirSync } from "node:fs";
-import unzipper from "unzipper";
-import bent from "bent";
-import { minionFileDetails, minionFileDownloadUrl2, minionFileList } from "./minion.constants";
-import { toAddonDetails, toAddonSummary } from "./minion.utils";
-import { AddonSummary, MinionFileDetailsResponse, MinionFileShortResponse } from "./minion.types";
+
 import { injectable } from "inversify";
+import { fetch } from "undici";
+import unzipper from "unzipper";
+
+import { minionFileDetails, minionFileDownloadUrl2, minionFileList } from "./minion.constants";
+import type {
+    AddonSummary,
+    AddonSummary2,
+    MinionFileDetailsResponse,
+    MinionFileShortResponse,
+} from "./minion.types";
+import { toAddonDetails, toAddonSummary, toAddonSummary2 } from "./minion.utils";
 
 @injectable()
 export class MinionService {
-    private readonly getJSON = bent("json");
+    private async getJSON(url: string) {
+        const response = await fetch(url);
+        return response.json();
+    }
 
     async listAddons() {
         const data = await this.getJSON(minionFileList());
         return (data as MinionFileShortResponse).map(toAddonSummary);
+    }
+
+    async listAddons2() {
+        const data = await this.getJSON(minionFileList());
+        return (data as MinionFileShortResponse)
+            .map(toAddonSummary)
+            .reduce((acc: AddonSummary2[], addon): AddonSummary2[] => {
+                acc.push(
+                    ...addon.ids.map(
+                        (id): AddonSummary2 => ({
+                            id,
+                            name: addon.name,
+                            version: addon.version,
+                            fileInfoUrl: addon.fileInfoUrl,
+                        }),
+                    ),
+                );
+                return acc;
+            }, []);
     }
 
     async getAddonDetails(id: string) {

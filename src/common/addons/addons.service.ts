@@ -1,9 +1,11 @@
-import { injectable } from "inversify";
-import { AddonMetadata, MetadataParserService } from "../metadata-parser";
-import { resolve, basename, extname } from "node:path";
 import { constants } from "node:fs";
 import { access, readFile, rm } from "node:fs/promises";
+import { basename, extname, resolve } from "node:path";
+
 import { glob } from "glob";
+import { injectable } from "inversify";
+
+import { type AddonMetadata, MetadataParserService } from "../metadata-parser";
 
 @injectable()
 export class AddonsService {

@@ -1,8 +1,9 @@
-import { CommandInterface } from "../types/command.interface";
-import { Command, Description, Parameter } from "../decorators";
 import { injectable } from "inversify";
+
 import { AddonsService } from "../common/addons";
 import { StoreService } from "../common/store";
+import { Command, Description, Parameter } from "../decorators";
+import type { CommandInterface } from "../types/command.interface";
 
 @Command("unused")
 @injectable()

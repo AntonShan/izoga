@@ -1,12 +1,12 @@
 import { COMMAND_PARAMETERS_METADATA_KEY } from "../types/metadata";
 
-export type ParameterOptions = {
+export interface ParameterOptions {
     name: string;
     description?: string;
     defaultValue?: any;
     optional?: boolean;
     type: "boolean" | "number" | "string";
-};
+}
 
 export function Parameter(name: string, data: Omit<ParameterOptions, "name">): ParameterDecorator {
     return function (target, propertyKey, parameterIndex) {

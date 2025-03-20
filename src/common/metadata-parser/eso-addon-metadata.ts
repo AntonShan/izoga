@@ -1,5 +1,5 @@
-import { type AddonMetadata, type DetailedAddonDependency } from "./metadata-parser.types";
 import { ADDON_WITH_VERSION, versionSelectorMap } from "./metadata-parser.constants";
+import { type AddonMetadata, type DetailedAddonDependency } from "./metadata-parser.types";
 
 export class EsoAddonMetadata {
     readonly metadata: AddonMetadata = {

@@ -1,7 +1,8 @@
+import { injectable } from "inversify";
+
+import { StoreService } from "../common/store";
 import { Command, Parameter } from "../decorators";
 import { CommandInterface } from "../types/command.interface";
-import { injectable } from "inversify";
-import { StoreService } from "../common/store";
 
 @Command("profile-remove")
 @injectable()

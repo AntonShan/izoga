@@ -1,6 +1,6 @@
 export type PrimitiveValue = string | number | boolean;
 
-export type AddonMetadata = {
+export interface AddonMetadata extends Record<string, unknown> {
     name: string;
     title: string;
     apiVersion: string[];
@@ -13,7 +13,7 @@ export type AddonMetadata = {
     isLibrary: boolean;
     sourceFiles: string[];
     additionalMeta: Record<string, PrimitiveValue>;
-};
+}
 
 export type MetaProperty = keyof Omit<AddonMetadata, "additionalMeta" | "sourceFiles">;
 
@@ -25,8 +25,8 @@ export enum VersionSelector {
 
 export type AddonDependency = string | DetailedAddonDependency;
 
-export type DetailedAddonDependency = {
+export interface DetailedAddonDependency {
     name: string;
     version?: string;
     versionSelector?: VersionSelector;
-};
+}

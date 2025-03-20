@@ -1,15 +1,11 @@
-import {
-    type AddonMetadata,
-    DetailedAddonDependency,
-    type MetaProperty,
-} from "./metadata-parser.types";
+import { EsoAddonMetadata } from "./eso-addon-metadata";
 import {
     COMMENT_LINE,
     EMPTY_LINE_CHECK,
     META_LINE_KEYWORD,
     META_LINE_REGEX,
 } from "./metadata-parser.constants";
-import { EsoAddonMetadata } from "./eso-addon-metadata";
+import type { AddonMetadata, DetailedAddonDependency, MetaProperty } from "./metadata-parser.types";
 
 const stringValue =
     (
@@ -60,13 +56,15 @@ export class MetadataParserService {
             if (property === undefined || value === undefined) continue;
 
             if (property in this.propertyMap && typeof this.propertyMap[property] === "function") {
-                const [targetProperty, transformedValue] = this.propertyMap[property]!(value);
+                const [targetProperty, transformedValue] = this.propertyMap[property](value);
 
                 if (Reflect.has(result.metadata, targetProperty)) {
                     if (Array.isArray(result.metadata[targetProperty])) {
                         (result.metadata[targetProperty] as DetailedAddonDependency[]).push(
                             ...(transformedValue as DetailedAddonDependency[]),
                         );
+                    } else {
+                        result.metadata[targetProperty] = transformedValue;
                     }
                 } else {
                     Reflect.set(result.metadata, targetProperty, transformedValue);

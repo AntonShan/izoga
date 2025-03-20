@@ -1,7 +1,8 @@
-import { Command, Parameter } from "../decorators";
-import { CommandInterface } from "../types/command.interface";
 import { injectable } from "inversify";
+
 import { StoreService } from "../common/store";
+import { Command, Parameter } from "../decorators";
+import { type CommandInterface } from "../types/command.interface";
 
 @Command("profile-add")
 @injectable()
@@ -16,8 +17,8 @@ export class AddProfileCommand implements CommandInterface {
             const newEntry = await this.storeService.addProfile(name, path);
 
             console.table(newEntry);
-        } catch (e: any) {
-            console.log(e.message);
+        } catch (e) {
+            console.log((e as Error).message);
         }
     }
 }

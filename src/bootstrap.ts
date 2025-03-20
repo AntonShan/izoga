@@ -1,14 +1,17 @@
-import yargs, { ArgumentsCamelCase, Options, PositionalOptions } from "yargs";
+import { argv } from "node:process";
+
+import { Container } from "inversify";
+import yargs, { type ArgumentsCamelCase, type Options, type PositionalOptions } from "yargs";
 import { hideBin } from "yargs/helpers";
-import { Constructable } from "./types/constructible.type";
+
+import type { ParameterOptions } from "./decorators";
+import { createContainer } from "./internals/container";
+import { type Constructable } from "./types/constructible.type";
 import {
     COMMAND_DESCRIPTION_METADATA_KEY,
     COMMAND_NAME_METADATA_KEY,
     COMMAND_PARAMETERS_METADATA_KEY,
 } from "./types/metadata";
-import { ParameterOptions } from "./decorators";
-import { createContainer } from "./internals/container";
-import { Container } from "inversify";
 
 export function bootstrap(commands: Constructable[]) {
     const container = createContainer();
@@ -48,7 +51,7 @@ export function bootstrap(commands: Constructable[]) {
                     handler,
                 );
             },
-            yargs(hideBin(process.argv)),
+            yargs(hideBin(argv)),
         )
         .version("0.0.1")
         .help()
@@ -123,8 +126,7 @@ function buildHandler(
                 }
 
                 if (parameter.type === "number") {
-                    // @ts-ignore
-                    return parseFloat(rawParameterValue);
+                    return Number(rawParameterValue);
                 }
 
                 if (parameter.type === "boolean") {

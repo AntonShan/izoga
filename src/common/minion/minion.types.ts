@@ -11,7 +11,7 @@ export interface MinionFileShort {
     UIDownloadTotal: string;
     UIDownloadMonthly: string;
     UIFavoriteTotal: string;
-    UICompatibility: Array<{ version: string; name: string }>;
+    UICompatibility: { version: string; name: string }[];
     UIDir: string[];
     UIIMG_Thumbs: string[];
     UIIMGs: string[];
@@ -45,6 +45,14 @@ export interface AddonSummary {
     name: string;
     // AddonId's of addons included in minion addon
     ids: string[];
+    version: string;
+}
+
+export interface AddonSummary2 {
+    id: string;
+    fileInfoUrl: string;
+    name: string;
+    version: string;
 }
 
 export interface AddonDetails {

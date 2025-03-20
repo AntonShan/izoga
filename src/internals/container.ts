@@ -1,7 +1,8 @@
 import { Container } from "inversify";
+
 import { AddonsService } from "../common/addons";
-import { StoreService } from "../common/store";
 import { MinionService } from "../common/minion";
+import { StoreService } from "../common/store";
 
 export function createContainer() {
     const container = new Container();

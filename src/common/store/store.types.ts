@@ -14,6 +14,7 @@ export const datastoreSchema = z.object({
             ),
         }),
     ),
+    lastUpdate: z.date().optional(),
 });
 
 export type Datastore = z.infer<typeof datastoreSchema>;
